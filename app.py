@@ -106,12 +106,12 @@ if st.button("Get Detailed Notes"):
         summary=generate_gemini_content(transcript_text,prompt)
         st.markdown("## Detailed Notes:")
         st.write(summary)
-if st.button("Download Markdown File"):
-    # with open("result.md", "rb") as file:
-    #     summary = file.read()
-    download_markdown(summary, "Summary.md")
-        # with open("Summary.md", "w") as md_file:
-        #     md_file.write(summary)
+    # if st.button("Download Markdown File"):
+        # with open("result.md", "rb") as file:
+        #     summary = file.read()
+        download_markdown(summary, "Summary.md")
+            # with open("Summary.md", "w") as md_file:
+            #     md_file.write(summary)
 
 
 
