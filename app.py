@@ -6,6 +6,7 @@ import os
 import google.generativeai as genai
 
 from youtube_transcript_api import YouTubeTranscriptApi
+import base64
 
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
@@ -71,6 +72,21 @@ def generate_gemini_content(transcript_text,prompt):
     response=model.generate_content(prompt+transcript_text)
     return response.text
 
+def download_markdown(content, filename):
+    """
+    Function to download markdown content as a file.
+    """
+    # with st.spinner(f"Downloading {filename}..."):
+    b64 = base64.b64encode(content).decode()
+    print("entered")
+    # Create a download link for the markdown file
+    href = f'<a href="data:text/markdown;base64,{b64}" download="{filename}">Click here to download</a>'
+    # href = f'<a href="data:text/markdown;base64,{b64}" download="{filename}">Click here to download {filename}</a>'
+    print("executing")
+    st.markdown(f'{href}', unsafe_allow_html=True)
+    # st.markdown(f'<a href="{href}" download="{filename}">Download {filename}</a>', unsafe_allow_html=True)
+    print("executed")
+
 st.title("YouTube Transcript to Detailed Notes Converter")
 youtube_link = st.text_input("Enter YouTube Video Link:")
 
@@ -86,8 +102,12 @@ if st.button("Get Detailed Notes"):
         summary=generate_gemini_content(transcript_text,prompt)
         st.markdown("## Detailed Notes:")
         st.write(summary)
-        with open("Summary.md", "w") as md_file:
-            md_file.write(summary)
+if st.button("Download Markdown File"):
+    with open("result.md", "rb") as file:
+        summary = file.read()
+    download_markdown(summary, "Summary.md")
+        # with open("Summary.md", "w") as md_file:
+        #     md_file.write(summary)
 
 
 
