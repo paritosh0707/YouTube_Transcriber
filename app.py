@@ -90,7 +90,7 @@ def download_markdown(content, filename):
     # st.markdown(f'<a href="{href}" download="{filename}">Download {filename}</a>', unsafe_allow_html=True)
     print("executed")
 
-st.title("YouTube Transcript to Detailed Notes Converter")
+st.title("Data Science Notes Extracter")
 youtube_link = st.text_input("Enter YouTube Video Link:")
 
 if youtube_link:
