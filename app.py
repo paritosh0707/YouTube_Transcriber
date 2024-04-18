@@ -49,7 +49,9 @@ provide the notes with explanation of the text given here:  """
 ## getting the transcript data from yt videos
 def extract_transcript_details(youtube_video_url):
     try:
-        video_id=youtube_video_url.split("=")[1]
+        video_id=youtube_video_url.split("?")[0].split("/")[-1]
+        # video_id="EoauGRf_VCA"
+        print(video_id)
         
         transcript_text=YouTubeTranscriptApi.get_transcript(video_id)
 
@@ -84,6 +86,8 @@ if st.button("Get Detailed Notes"):
         summary=generate_gemini_content(transcript_text,prompt)
         st.markdown("## Detailed Notes:")
         st.write(summary)
+        with open("Summary.md", "w") as md_file:
+            md_file.write(summary)
 
 
 
