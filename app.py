@@ -76,8 +76,11 @@ def download_markdown(content, filename):
     """
     Function to download markdown content as a file.
     """
-    # with st.spinner(f"Downloading {filename}..."):
-    b64 = base64.b64encode(content).decode()
+    # Convert content to bytes
+    content_bytes = content.encode('utf-8')
+    # Encode content as Base64
+    b64 = base64.b64encode(content_bytes).decode()
+    # Create a download link for the markdown file
     print("entered")
     # Create a download link for the markdown file
     href = f'<a href="data:text/markdown;base64,{b64}" download="{filename}">Click here to download</a>'
@@ -94,17 +97,18 @@ if youtube_link:
     video_id = youtube_link.split("=")[1]
     # print(video_id)
     st.image(f"http://img.youtube.com/vi/{video_id}/0.jpg", use_column_width=True)
-
+summary = ""
 if st.button("Get Detailed Notes"):
     transcript_text=extract_transcript_details(youtube_link)
 
     if transcript_text:
+        # global summary
         summary=generate_gemini_content(transcript_text,prompt)
         st.markdown("## Detailed Notes:")
         st.write(summary)
 if st.button("Download Markdown File"):
-    with open("result.md", "rb") as file:
-        summary = file.read()
+    # with open("result.md", "rb") as file:
+    #     summary = file.read()
     download_markdown(summary, "Summary.md")
         # with open("Summary.md", "w") as md_file:
         #     md_file.write(summary)
