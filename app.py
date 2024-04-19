@@ -51,7 +51,7 @@ def get_video_id(url):
     if url.startswith(('youtu','www')):
         url="http://"+url
     query=urlparse(url)
-    if('youtube' in query.hostname:
+    if 'youtube' in query.hostname:
         if query.path == '/watch':
             return parse_qs(query.query)['v'][0]
         elif query.path.startswith(('/embed','/v/'))
