@@ -46,11 +46,26 @@ provide the notes with explanation of the text given here:  """
 #             Please provide the YouTube video transcript, and I'll generate the detailed notes on Data Science and Statistics accordingly.
 #         """
 
+def get_video_id(url):
+    from urllib.parse import urlparse, parse_qs
+    if url.startswith(('youtu','www')):
+        url="http://"+url
+    query=urlparse(url)
+    if('youtube' in query.hostname:
+        if query.path == '/watch':
+            return parse_qs(query.query)['v'][0]
+        elif query.path.startswith(('/embed','/v/'))
+            return query.path.split('/')[2]
+    elif 'youtu.be' in query.hostname:
+        return query.path[1:]
+    else:
+        raise ValueError
 
 ## getting the transcript data from yt videos
 def extract_transcript_details(youtube_video_url):
     try:
-        video_id=youtube_video_url.split("?")[0].split("/")[-1]
+        # video_id=youtube_video_url.split("?")[0].split("/")[-1]
+        video_id=get_video_id(youtube_video_url)
         # video_id="EoauGRf_VCA"
         print(video_id)
         
