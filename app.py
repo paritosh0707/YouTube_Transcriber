@@ -46,24 +46,80 @@ provide the notes with explanation of the text given here:  """
 #             Please provide the YouTube video transcript, and I'll generate the detailed notes on Data Science and Statistics accordingly.
 #         """
 
+# def get_video_id(url):
+#     try:
+#         print("entered in the get_video_id method")
+#         from urllib.parse import urlparse, parse_qs
+#         if url.startswith(('youtu','www')):
+#             url="http://"+url
+#         query=urlparse(url)
+#         if 'youtube' in query.hostname:
+#             if query.path == '/watch':
+#                 return str(parse_qs(query.query)['v'][0])
+#             elif query.path.startswith(('/embed','/v/')):
+#                 return str(query.path.split('/')[2])
+#         elif 'youtu.be' in query.hostname:
+#             print("Inside the get_video method")
+#             print(type(query.path[1:]))
+#             print(query.path[1:])
+#             return str(query.path[1:])
+#         else:
+#             print("entered here")
+#             raise ValueError
+#     except Exception as e:
+#         raise e
+
+from urllib.parse import urlparse, parse_qs
+
 def get_video_id(url):
-    from urllib.parse import urlparse, parse_qs
-    if url.startswith(('youtu','www')):
-        url="http://"+url
-    query=urlparse(url)
-    if 'youtube' in query.hostname:
-        if query.path == '/watch':
-            return parse_qs(query.query)['v'][0]
-        elif query.path.startswith(('/embed','/v/')):
-            return query.path.split('/')[2]
-    elif 'youtu.be' in query.hostname:
-        return query.path[1:]
-    else:
-        raise ValueError
+    try:
+        # Ensure the URL is properly formatted
+        if not url.startswith(('http://', 'https://')):
+            url = "http://" + url
+        
+        # Parse the URL
+        parsed_url = urlparse(url)
+        
+        # Check if it's a YouTube URL
+        if 'youtube.com' in parsed_url.netloc or 'youtu.be' in parsed_url.netloc:
+            # Extract video ID based on the URL format
+            if parsed_url.path == '/watch':
+                # Standard YouTube URL format: https://www.youtube.com/watch?v=VIDEO_ID
+                query_params = parse_qs(parsed_url.query)
+                if 'v' in query_params:
+                    video_id = query_params['v'][0]
+                    if isinstance(video_id, str):
+                        return video_id
+            elif parsed_url.path.startswith(('/embed/', '/v/')):
+                # Embedded URL format: https://www.youtube.com/embed/VIDEO_ID
+                # Shortened URL format: https://youtu.be/VIDEO_ID
+                video_id = parsed_url.path.split('/')[-1]
+                if isinstance(video_id, str):
+                    return video_id
+            elif parsed_url.netloc == 'youtu.be':
+                # Shortened URL format: https://youtu.be/VIDEO_ID
+                video_id = parsed_url.path[1:]
+                if isinstance(video_id, str):
+                    return video_id
+            elif '/live/' in parsed_url.path:
+                # Live stream URL format: https://www.youtube.com/live/VIDEO_ID
+                video_id = parsed_url.path.split('/')[-1]
+                if isinstance(video_id, str):
+                    return video_id
+        
+        # If URL is not a YouTube URL or video ID couldn't be extracted, return None
+        return None
+    
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
+
+
 
 ## getting the transcript data from yt videos
 def extract_transcript_details(youtube_video_url):
     try:
+        print("entered in the extract_transcript method")
         # video_id=youtube_video_url.split("?")[0].split("/")[-1]
         video_id=get_video_id(youtube_video_url)
         # video_id="EoauGRf_VCA"
@@ -108,14 +164,16 @@ def download_markdown(content, filename):
 st.title("Data Science Notes Extractor")
 youtube_link = st.text_input("Enter YouTube Video Link:")
 
-if youtube_link:
-    video_id = youtube_link.split("=")[1]
-    # print(video_id)
-    st.image(f"http://img.youtube.com/vi/{video_id}/0.jpg", use_column_width=True)
+# if youtube_link:
+#     # video_id = youtube_link.split("=")[1]
+#     video_id=get_video_id(youtube_link)
+#     # print(video_id)
+#     st.image(f"http://img.youtube.com/vi/{video_id}/0.jpg", use_column_width=True)
 summary = ""
 if st.button("Get Detailed Notes"):
+    print(youtube_link)
     transcript_text=extract_transcript_details(youtube_link)
-
+    print("transcript_extracted")
     if transcript_text:
         # global summary
         summary=generate_gemini_content(transcript_text,prompt)
