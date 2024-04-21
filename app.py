@@ -164,11 +164,11 @@ def download_markdown(content, filename):
 st.title("Data Science Notes Extractor")
 youtube_link = st.text_input("Enter YouTube Video Link:")
 
-# if youtube_link:
-#     # video_id = youtube_link.split("=")[1]
-#     video_id=get_video_id(youtube_link)
-#     # print(video_id)
-#     st.image(f"http://img.youtube.com/vi/{video_id}/0.jpg", use_column_width=True)
+if youtube_link:
+    # video_id = youtube_link.split("=")[1]
+    video_id=get_video_id(youtube_link)
+    # print(video_id)
+    st.image(f"http://img.youtube.com/vi/{video_id}/0.jpg", use_column_width=True)
 summary = ""
 if st.button("Get Detailed Notes"):
     print(youtube_link)
